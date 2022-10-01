@@ -3,6 +3,7 @@ from enum import unique
 from unittest.util import _MAX_LENGTH
 from uuid import uuid4
 from django.db import models
+from datetime import date
 
 # Create your models here.
 
@@ -29,5 +30,14 @@ class Enrollment(models.Model):
     photo = models.ImageField(null= True, blank= True) 
     employee = models.ForeignKey(Employee, null= True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return self.id
+
+class Mark(models.Model):
+    id =  models.BigAutoField(auto_created=False, primary_key=True, serialize=False, verbose_name='ID')
+    mark_date = models.DateField(default=date.today, null= True)
+    employee = models.ForeignKey(Employee, null= True, on_delete=models.SET_NULL)
+    company = models.ForeignKey(Company, null= True, on_delete=models.SET_NULL)
+    
     def __str__(self):
         return self.id

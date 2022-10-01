@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Company
 from .models import Employee
 from .models import Enrollment
+from .models import Mark
 from django.core.files import File
 import urllib
 import os
@@ -122,6 +123,53 @@ class EnrollmentView(View):
         company = Company.objects.get(name= jd['compania'])
         employee = Employee.objects.get(name = jd['nombreEmpleado'], company = company)
         Enrollment.objects.create(photo= request.FILES.get('image_upload'), employee = employee).save()
+        return JsonResponse(datos)
+
+    def put(self, request):
+        pass
+
+    def delete(self, request):
+        pass
+
+
+class MarkView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        mark = list(Mark.objects.values())
+
+        jd = json.loads(request.body) 
+        print(jd['employee'], jd['company'])
+        try:
+            print("entro al try")
+            if jd['employee'] is not None and jd['company'] is not None and jd['initialDate'] is not None and jd['lastDate'] is not None:
+                print("PASO EL IF")
+                filter_mark = list(Mark.objects.filter(
+                    employee=int(jd['employee']), 
+                    company = int(jd['company']), 
+                    mark_date__gte=jd['initialDate'], mark_date__lte=jd['lastDate']).values())
+                    
+                data = {'message': "Success", 'Marks': filter_mark}
+                return JsonResponse(data)
+            else:
+                pass
+        except:
+            print("paso")
+            data = {'message': "mark not found.."}
+            return JsonResponse(data)
+            
+
+
+    def post(self, request):
+        jd = json.loads(request.body)
+        print(jd)
+        employee = Employee.objects.get(name = jd['nombreEmpleado'])
+        company = Company.objects.get(name = jd['nombreCompania'])
+        Mark.objects.create(employee = employee, company = company)
+        datos = {'message': "Success"}
         return JsonResponse(datos)
 
     def put(self, request):
