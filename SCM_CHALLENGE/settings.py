@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,12 +78,12 @@ WSGI_APPLICATION = 'SCM_CHALLENGE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'USER': 'root',
+        'ENGINE': config('DB_ENGINE'),
+        'HOST': config('DB_HOST'),  
+        'PORT': config('DB_PORT'),
+        'USER': config('DB_USER'),
         'PASSWORD': '',
-        'NAME': 'scm_challenge',
+        'NAME': config('DB_NAME'),
         'OPTIONS':{
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }

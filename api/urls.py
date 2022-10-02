@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import Enrollment, EnrollmentView, MarkView
+from .views import EnrollmentView, MarkView
 from .views import CompanyView
 from .views import EmployeeView
 from django.conf import settings
