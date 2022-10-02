@@ -11,5 +11,5 @@ urlpatterns=[
     path('companies/', CompanyView.as_view(), name='companies_list'),
     path('employee/', EmployeeView.as_view(), name='Employee_list'),
     path('enrollment/', EnrollmentView.as_view(), name='Enrollment_list'),
-    path('mark/', MarkView.as_view(), name='Mark_list')
+    path('mark/', MarkView.as_view(), name='Mark_list') 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

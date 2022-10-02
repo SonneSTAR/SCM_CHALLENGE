@@ -8,9 +8,6 @@ from .models import Company
 from .models import Employee
 from .models import Enrollment
 from .models import Mark
-from django.core.files import File
-import urllib
-import os
 #from .models import Upload
 
 import json
@@ -55,11 +52,13 @@ class EmployeeView(View):
 
     def get(self, request):
         try:
+            company_fk_id = self.request.GET.get("company_fk_id")
+            id_employee = self.request.GET.get("id_employee")
             employees = list(Employee.objects.values())
-            jd = json.loads(request.body)
+            print(id_employee)
             try:
-                if jd['company_fk_id'] is not None:
-                    filter_employee = list(Employee.objects.filter(company_fk = int(jd['company_fk_id']) ).values())
+                if company_fk_id is not None:
+                    filter_employee = list(Employee.objects.filter(company = int(company_fk_id) ).values())
                     datos = {'message': "Success", 'employees': filter_employee}
                     return JsonResponse(datos)
                 else:
@@ -68,9 +67,9 @@ class EmployeeView(View):
                 pass
             
             try:
-                if jd['id'] is not None:
+                if id_employee is not None:
                     print("PASO employee_id")
-                    filter_employee = list(Employee.objects.filter(id = int(jd['id']) ).values())
+                    filter_employee = list(Employee.objects.filter(id = int(id_employee)).values())
                     
                     datos = {'message': "Success", 'employees': filter_employee}
                     
@@ -91,9 +90,7 @@ class EmployeeView(View):
 
     def post(self, request):
         try:
-            # print(request.body)
             jd = json.loads(request.body)
-            # print(jd)
             company = Company.objects.get(id=jd['company_fk_id'])
             Employee.objects.create(name=jd['name'], company=company)
             datos = {'message': "Success"}
@@ -140,17 +137,21 @@ class MarkView(View):
 
     def get(self, request):
         mark = list(Mark.objects.values())
-
-        jd = json.loads(request.body) 
-        print(jd['employee'], jd['company'])
+        print("ENTRO AL GET")
+        employee = self.request.GET.get("employee")
+        company = self.request.GET.get("company")
+        initialDate = self.request.GET.get("initialDate")
+        lastDate = self.request.GET.get("lastDate")
+        #jd = json.loads(request.body) 
         try:
             print("entro al try")
-            if jd['employee'] is not None and jd['company'] is not None and jd['initialDate'] is not None and jd['lastDate'] is not None:
+            if employee is not None and company is not None and initialDate is not None and  lastDate is not None:
                 print("PASO EL IF")
+                print(initialDate)
                 filter_mark = list(Mark.objects.filter(
-                    employee=int(jd['employee']), 
-                    company = int(jd['company']), 
-                    mark_date__gte=jd['initialDate'], mark_date__lte=jd['lastDate']).values())
+                    employee=int(employee), 
+                    company = int(company), 
+                    mark_date__gte=initialDate, mark_date__lte=lastDate).values())
                     
                 data = {'message': "Success", 'Marks': filter_mark}
                 return JsonResponse(data)
@@ -164,13 +165,20 @@ class MarkView(View):
 
 
     def post(self, request):
-        jd = json.loads(request.body)
-        print(jd)
-        employee = Employee.objects.get(name = jd['nombreEmpleado'])
-        company = Company.objects.get(name = jd['nombreCompania'])
-        Mark.objects.create(employee = employee, company = company)
-        datos = {'message': "Success"}
-        return JsonResponse(datos)
+        try:
+            print("asd")
+            jd = json.loads(request.body)
+            print(jd)
+            employee = Employee.objects.get(name = jd['nombreEmpleado'])
+            
+            company = Company.objects.get(name = jd['nombreCompania'])
+            print("se cae?")
+            Mark.objects.create(employee = employee, company = company)
+            
+            datos = {'message': "Success"}
+            return JsonResponse(datos)
+        except:
+            return JsonResponse(f"error")
 
     def put(self, request):
         pass
