@@ -25,13 +25,16 @@ class CompanyView(View):
         else:
             datos = {'message': "Companies not found.."}
         return JsonResponse(datos)
-
+    ##ADITIONAL ENDPOINT TO ADD A COMPANY
     def post(self, request):
-        jd = json.loads(request.body)
-        Company.objects.create(
+        try:
+            jd = json.loads(request.body)
+            Company.objects.create(
             name=jd['name'], website=jd['website'], foundation=int(jd['foundation']))
-        datos = {'message': "Success"}
-        return JsonResponse(datos)
+            datos = {'message': "Success"}
+            return JsonResponse(datos)
+        except:
+            return JsonResponse({'message': "Ah ocurrido un error."})
 
     def put(self, request):
         pass
