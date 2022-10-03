@@ -23,8 +23,8 @@ class CompanyView(View):
         if len(companies) > 0:
             datos = {'message': "Success", 'companies': companies}
         else:
-            datos = {'message': "Companies not found.."}
-        return JsonResponse(datos)
+            datos = {'message': "Companies not found."}
+        return JsonResponse(datos, status=404)
     ##ADITIONAL ENDPOINT TO ADD A COMPANY
     def post(self, request):
         try:
@@ -34,7 +34,7 @@ class CompanyView(View):
             datos = {'message': "Success"}
             return JsonResponse(datos)
         except:
-            return JsonResponse({'message': "Ah ocurrido un error."})
+            return JsonResponse({'message': "Ah ocurrido un error ingresando la compania."}, status=400)
 
     def put(self, request):
         pass
@@ -93,7 +93,7 @@ class EmployeeView(View):
             datos = {'message': "Success"}
             return JsonResponse(datos)
         except:
-            return JsonResponse({'message': 'Ha ocurrido un error'}, status= 404)
+            return JsonResponse({'message': 'Ha ocurrido un error ingresando al empleado.'}, status= 400)
 
 
 
@@ -111,7 +111,7 @@ class EnrollmentView(View):
             Enrollment.objects.create(photo= request.FILES.get('image_upload'), employee = employee).save()
             return JsonResponse({'message': "Success"} )
         except:
-            return JsonResponse({'message': 'Ha ocurrido un error, la compania o empleado no existen.'})
+            return JsonResponse({'message': 'Ha ocurrido un error, la compania o empleado no existen.'},status= 404)
     def put(self, request):
         pass
 
@@ -137,13 +137,19 @@ class MarkView(View):
                     company = int(company), 
                     mark_date__gte=initialDate, mark_date__lte=lastDate).values())
                     
-                data = {'message': "Success", 'Marks': filter_mark}
+                
+                if len(filter_mark) > 0:
+                    data = {'message': "Success", 'Marks': filter_mark}
+                    return JsonResponse(data)
+                else:
+                    data = {'message': "Marks not found."}
+                    return JsonResponse(data, status= 404)
                 return JsonResponse(data)
             else:
                 pass
         except:
-            data = {'message': "mark not found.."}
-            return JsonResponse(data)
+            data = {'message': "marks not found."}
+            return JsonResponse(data,status= 404)
             
 
 
@@ -157,7 +163,7 @@ class MarkView(View):
             datos = {'message': "Success"}
             return JsonResponse(datos)
         except:
-            return JsonResponse({'message': "Ha ocurrido un error."})
+            return JsonResponse({'message': "No se ha podido ingresar la marca"}, status = 400)
 
     def put(self, request):
         pass
