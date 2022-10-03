@@ -80,8 +80,8 @@ class EmployeeView(View):
             if len(employees) > 0:
                 data = {'message': "Success", 'employees': employees}
             else:
-                data = {'message': "employees not found.."}
-            return JsonResponse(data)
+                data = {'message': "employees not found."}
+            return JsonResponse(data, status = 404)
 
 
 
